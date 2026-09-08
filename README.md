@@ -1,14 +1,13 @@
 # Equal Earth Maps — 地図をメルカトル図法からイコールアース図法に変える拡張機能
 
-Google マップ / Bing Maps / Yahoo!地図 / 百度地图 (Baidu Maps) の
-「Webメルカトル」表示を、**イコールアース (Equal Earth) 正積図法**に変換して表示する
-Chrome / Firefox 拡張機能です。※ 現在は **OpenStreetMap / 国土地理院地図** に対応。
+OpenStreetMap / 国土地理院地図の「Webメルカトル」表示を、
+**イコールアース (Equal Earth) 正積図法**に変換して表示する Chrome / Firefox 拡張機能です。
 
 > イコールアース図法 = 2018年発表の正積(面積が正しい)図法。メルカトルでは実際より大きく
 > 見えるグリーンランド/ロシア/カナダが縮み、アフリカ・南米・オセアニアが正しい比率で描かれます。
 > 2026年9月には国連総会が「正積図法への切り替えを推奨する決議」を採択しています。
 
-![demo](demo/demo_ee_final.jpg)
+![世界をイコールアース図法で表示](store/screenshots/01-world-equal-earth.png)
 
 ## できること / できないこと
 
@@ -63,7 +62,7 @@ WebGLキャンバス (地図パネルに重ねる。pointer-events:none で操�
 
 - Equal Earth の正投影/逆投影はシェーダ内に実装(定数 A1..A4 は論文由来)。
   逆投影はニュートン法(24反復・GPU)。
-- レターボックス部分は暗色。経線の湾曲(疑似円筒)に沿った正しい図郭になります。
+- 未取得領域・図郭外は海色で表示。
 - 数学コアは単体テスト済み(ラウンドトリップ誤差 <1e-7度 / 等積性も数値検証)。
 - パイプラインは「色=経緯度」のインデックステクスチャによる数値検証済み
   (平均誤差 経度0.36°・緯度0.20° = 色量子化レベルのみ)。
@@ -73,21 +72,21 @@ WebGLキャンバス (地図パネルに重ねる。pointer-events:none で操�
 ```
 equal-earth-maps/
 ├─ manifest.chrome.json / manifest.firefox.json
+├─ background.js             ショートカット / 設定の同期
 ├─ content/content.js        ページ内コントローラ
-├─ background.js             キャプチャAPI提供 / ショートカット
+├─ BUILD.md                  AMOソース提出用のビルド手順
 ├─ popup/                    拡張ポップアップUI
 ├─ shared/
 │  ├─ math.js                Equal Earth + Webメルカトル数式 (JS)
 │  ├─ glsl.js                WebGLシェーダ (EE逆投影をGLSLで実装)
 │  ├─ engine.js              EEOverlay (WebGL描画エンジン・生座標ビュー対応)
-│  ├─ sites.js               サイト検出
-│  ├─ sources.js             (旧)追従方式ソース / キャプチャソース / タイルimg取得
+│  ├─ sites.js               対応サイト(OSM / 国土地理院)
+│  ├─ sources.js             タイル取得(crossOrigin img + フォールバック)
 │  └─ eeslippy.js            自己駆動EE地図(タイルオンデマンド取得)
-├─ demo/                     動作デモ (ブラウザでそのまま試せる)
-│  ├─ demo.html              OSM実タイルのデモ (#ee付きで開くと自動ON)
-│  ├─ test-ee-grid.html      数値検証ページ
-│  └─ verify*.py             Playwright検証スクリプト
+├─ demo/                     動作デモ / 数値検証 (ブラウザでそのまま試せる)
+├─ tests/                    数学の単体テスト
 ├─ icons/                    アイコン
+├─ store/                    ストア提出用アセット(説明文・スクショ・ソースzip)
 └─ dist/                     ビルド成果物 (chrome / firefox / zip)
 ```
 
@@ -99,7 +98,7 @@ cd equal-earth-maps && python -m http.server 8099
 
 ## 既知の制限
 
-- Google/Bing/Yahoo/百度(キャプチャ方式)は削除済み(表示品質の問題により非対応)。
+- 対応は OpenStreetMap / 国土地理院地図のみ(他サイトは描画エンジンが非公開のため非対応)。
 - メルカトル由来のため緯度表示は ±85.05° が上限。極付近のごく一部は表示されません。
 - OSM/国土地理院で高DPI・巨大モニタの場合、描画解像度は自動調整されます。
 - OSM/国土地理院のタイルは「ページ自身が取得するのと同じ条件(ブラウザUA・
@@ -107,9 +106,8 @@ cd equal-earth-maps && python -m http.server 8099
   それでも418等でブロックされた場合はタイルサーバーの使用ポリシー
   (https://operations.osmfoundation.org/policies/tiles/)に従ってください。
   ブロックは時間経過で回復します。
-- OSM/地理院で高DPI・巨大モニタの場合、描画解像度は長辺3072pxに自動で抑えられます。
-- 地図サイトの仕様変更でセレクタが効かなくなることがあります(その場合は sites.js を調整)。
-- 本ツールは各サイトの画面をローカルで再投影するだけの個人向けビューアです。
+- 地図サイトの仕様変更で表示が崩れることがあります(その場合は sites.js / eeslippy.js を調整)。
+- 表示される地図データ自体の権利は各提供元(OpenStreetMap contributors / 国土地理院)に帰属します。
   商用・再配布・サーバーサイドでの利用は各サイトの利用規約を確認してください。
 
 ## ライセンス

@@ -11,3 +11,6 @@ demo/*.png
 Thumbs.db
 .DS_Store
 *.log
+
+# ローカル生成のソース提出zip
+store/source/
