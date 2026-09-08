@@ -3,7 +3,7 @@
   "name": "Equal Earth Maps — 地図をイコールアース図法に",
   "short_name": "EqualEarthMaps",
   "version": "1.0.0",
-  "description": "Googleマップ / Bing / Yahoo!地図 / 百度地图 / OpenStreetMap / 国土地理院地図などのメルカトル表示を、正積図法イコールアース(Equal Earth)に変換して表示する投影ビューア拡張。",
+  "description": "OpenStreetMapと国土地理院地図のメルカトル表示を、イコールアース(正積)図法に変換して表示する拡張機能。データ収集・外部送信なし。",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -64,7 +64,9 @@
       "id": "equal-earth-maps@hikamer.local",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
-        "required": ["none"],
+        "required": [
+          "none"
+        ],
         "optional": []
       }
     }
