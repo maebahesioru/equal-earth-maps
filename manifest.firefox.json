@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Equal Earth Maps — 地図をイコールアース図法に",
+  "short_name": "EqualEarthMaps",
+  "version": "1.0.0",
+  "description": "Googleマップ / Bing / Yahoo!地図 / 百度地图 / OpenStreetMap / 国土地理院地図などのメルカトル表示を、正積図法イコールアース(Equal Earth)に変換して表示する投影ビューア拡張。",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://www.openstreetmap.org/*",
+    "*://maps.gsi.go.jp/*",
+    "*://tile.openstreetmap.org/*",
+    "*://cyberjapandata.gsi.go.jp/*"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.openstreetmap.org/*",
+        "*://maps.gsi.go.jp/*"
+      ],
+      "js": [
+        "lib/math.js",
+        "lib/glsl.js",
+        "lib/engine.js",
+        "lib/sites.js",
+        "lib/sources.js",
+        "lib/eeslippy.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "Equal Earth Maps",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "commands": {
+    "toggle-equal-earth": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description": "イコールアース表示を切り替え"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "equal-earth-maps@hikamer.local",
+      "strict_min_version": "115.0"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Equal Earth Maps</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Equal Earth Maps</h1>
+    <p class="sub">メルカトル地図をイコールアース図法で表示</p>
+  </header>
+
+  <label class="switch">
+    <input type="checkbox" id="master">
+    <span class="track"></span>
+    <span class="lbl">イコールアース表示</span>
+  </label>
+
+  <div id="status" class="status">このページでは未対応です</div>
+
+  <section>
+    <div class="site-row"><b>対応サイト</b></div>
+    <table class="sites">
+      <tr><td>OpenStreetMap</td><td class="mode ok">完全対応(任意ズーム)</td></tr>
+      <tr><td>国土地理院地図</td><td class="mode ok">完全対応(任意ズーム)</td></tr>
+    </table>
+    <p class="help">※ 地図上の「Equal Earth: ON」ピルからOFF、「全体へ」で世界表示まで戻せます。<br>
+    ※ ドラッグ/ホイール中もイコールアース表示のまま動きます。<br>
+    ※ 投影の効果は広域(全体〜大陸)表示で最も明確です。都市ズームではメルカトルとの差はごく僅かです。</p>
+  </section>
+
+  <footer>ショートカット: Ctrl+Shift+E</footer>
+  <script src="popup.js"></script>
+</body>
+</html>

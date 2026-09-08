@@ -1,0 +1,30 @@
+Equal Earth Maps — turn web maps into the Equal Earth projection
+----------------------------------------------------------------
+
+Convert OpenStreetMap and GSI (Geospatial Information Authority of Japan) maps
+from Web Mercator to the Equal Earth equal-area projection.
+
+* Self-driven slippy map: pan and zoom stay in Equal Earth at any zoom level
+  (tiles are fetched on demand).
+* Works on openstreetmap.org and maps.gsi.go.jp.
+* Toggle: browser toolbar, keyboard shortcut Ctrl+Shift+E, or the on-map pill.
+* 100% local: no account, no tracking, no data sent anywhere except normal
+  tile requests to the map site you are already using.
+
+Short description:
+View OpenStreetMap and 国土地理院地図 (GSI) maps in the Equal Earth
+equal-area projection.
+
+Category: Productivity / Maps & Navigation
+
+Single purpose: Display web maps in the Equal Earth (equal-area) projection.
+
+Permissions
+- host permissions for openstreetmap.org, maps.gsi.go.jp, and their tile
+  servers only (used to load map tiles for reprojection).
+- storage: remember the on/off switch.
+
+Privacy
+No user data is collected, transmitted, or stored. The extension only loads
+map tiles from the tile servers of the sites it runs on and processes them
+locally in your browser.

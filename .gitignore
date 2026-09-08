@@ -1,0 +1,13 @@
+# ビルド成果物はリポジトリに含めない(リリースアセットとして配布)
+dist/
+# Python/キャッシュ
+__pycache__/
+*.pyc
+# ローカル検証の一時画像
+demo/*.png
+!store/screenshots/*.png
+!demo/demo_ee_final.jpg
+# OS/エディタ
+Thumbs.db
+.DS_Store
+*.log

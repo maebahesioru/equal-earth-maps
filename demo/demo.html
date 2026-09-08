@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Equal Earth Maps — 動作デモ (OpenStreetMap 実タイル)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  html,body{margin:0;height:100%;font:14px/1.5 system-ui,"Segoe UI",Meiryo,sans-serif;background:#0d1117;color:#e6edf3;}
+  #bar{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#161b22;border-bottom:1px solid #30363d;flex-wrap:wrap;}
+  #bar button{background:#1f6feb;border:0;color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;}
+  #bar button.off{background:#30363d;}
+  #bar .info{color:#8b949e;font-size:12px;}
+  #bar .win{color:#7ee787;font-size:12px;font-family:ui-monospace,Consolas,monospace;}
+  #wrap{position:relative;height:calc(100% - 52px);}
+  #map{position:absolute;inset:0;background:#aad3df;}
+  .attrib{font-size:10px;color:#6e7681;padding:4px 10px;border-top:1px solid #21262d;}
+</style>
+</head>
+<body>
+<div id="bar">
+  <button id="toggle" class="off">イコールアース表示 ON</button>
+  <span id="mode" class="info">初期化中…</span>
+  <span id="win" class="win"></span>
+</div>
+<div id="wrap"><div id="map"></div></div>
+<div class="attrib">動作検証用デモ。表示中は元のメルカトル地図タイル(OpenStreetMap © contributors)をイコールアース図法に再投影しています。ドラッグ/ホイール中は元表示に切り替わります。</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../shared/math.js"></script>
+<script src="../shared/glsl.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/sites.js"></script>
+<script src="../shared/sources.js"></script>
+<script>
+(function () {
+  const wrap = document.getElementById('wrap');
+  const mapEl = document.getElementById('map');
+
+  // Leaflet 地図 (世界表示で開始)
+  const map = L.map(mapEl, { zoomControl: true, attributionControl: true, zoomSnap: 1, maxZoom: 19 });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  map.setView([20, 0], 2);
+
+  const statusEl = document.getElementById('mode');
+  const winEl = document.getElementById('win');
+  const btn = document.getElementById('toggle');
+  let overlay = null, src = null, on = false;
+
+  function paneEl() { return mapEl; }
+
+  function init() {
+    if (overlay) return;
+    const pane = paneEl();
+    overlay = new EEOverlay(pane, { maxDim: 2560 });
+    // 自己駆動EE地図(スリッピー)。タイルはページのLeafletが読み込んだ後、
+    // EESlippyInfer が同一タイルサーバーを推定して独自取得する
+    src = new EESlippy(pane, overlay, () => EESlippyInfer(pane));
+    window.__eedemo = { get overlay() { return overlay; }, get source() { return src; }, get on() { return on; } };
+  }
+
+  function fmt(v) { return v.toFixed(2); }
+
+  btn.addEventListener('click', () => {
+    on = !on;
+    init();
+    overlay.setEnabled(on);
+    btn.textContent = on ? '元のメルカトル表示に戻す' : 'イコールアース表示 ON';
+    btn.classList.toggle('off', !on);
+    statusEl.textContent = on ? 'イコールアース(正積)図法 — ドラッグ/ホイールで自由に移動できます' : 'メルカトル(元の表示)';
+    if (on) {
+      if (!src._started) src.attach();
+      else src.schedule(80);
+    }
+  });
+
+  // 状態表示
+  setInterval(() => {
+    if (!overlay || !overlay._win) return;
+    const w = overlay._win;
+    winEl.textContent = '窓: lon ' + fmt(w.lonL) + ' .. ' + fmt(w.lonR) +
+      ' / lat ' + fmt(w.latBot) + ' .. ' + fmt(w.latTop) + '  (source=' + (src && src._mosaic ? src._mosaic.width + 'x' + src._mosaic.height : '-') + ')';
+  }, 400);
+
+  statusEl.textContent = '準備OK — 「イコールアース表示 ON」を押すと変換表示';
+
+  // 自動検証モード: #ee 付きで開くと即時ON
+  if (location.hash.indexOf('ee') >= 0) {
+    setTimeout(() => { btn.click(); }, 1200);
+  }
+  window.__eedemo = {
+    get overlay() { return overlay; },
+    get source() { return src; },
+    get on() { return on; }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>EE Slippy test</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>html,body{margin:0;height:100%;background:#000;}#map{position:absolute;inset:0;background:#aad3df;}</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../shared/math.js"></script>
+<script src="../shared/glsl.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/sites.js"></script>
+<script src="../shared/sources.js"></script>
+<script src="../shared/eeslippy.js"></script>
+<script>
+(function () {
+  const mapEl = document.getElementById('map');
+  const map = L.map(mapEl, { zoomControl: true, attributionControl: false, zoomSnap: 1, maxZoom: 19 });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  map.setView([10, 0], 2);
+  window.__eeReady = false;
+  /* ローカル検証ページのためunpkg CDNを素で利用(拡張本体には含まない) */
+  setTimeout(() => {
+    const ov = new EEOverlay(mapEl, { maxDim: 3072 });
+    const slip = new EESlippy(mapEl, ov, () => EESlippyInfer(mapEl));
+    slip.attach();
+    window.__slip = slip; window.__ov = ov;
+    window.__eeReady = true;
+  }, 1500);
+})();
+</script>
+</body>
+</html>
